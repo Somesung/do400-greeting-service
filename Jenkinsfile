@@ -1,4 +1,4 @@
-pipeline{
+ipeline{
     agent{
         label "nodejs"
     }
@@ -21,6 +21,22 @@ pipeline{
             }
         }
 
-        // Add the "Deploy" stage here
+        stage('Release') {
+            steps {
+                sh '''
+                    oc project gvvprs-greetings
+                    oc start-build greeting-console --follow --wait
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    oc project RHT_OCP4_DEV_USER-greetings
+                    oc start-build greeting-service --follow --wait
+                '''
+            }
+        }
     }
 }
